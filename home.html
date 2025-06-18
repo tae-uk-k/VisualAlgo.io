@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>알고리즘 시각화</title>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --bg: #f7f9fb;
+      --text: #212529;
+      --card-bg: #fff;
+      --shadow: rgba(0,0,0,0.05);
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      flex-direction: column;
+    }
+    .container {
+      text-align: center;
+      padding: 20px;
+      width: 100%;
+      max-width: 800px;
+    }
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+    p {
+      font-size: 1rem;
+      margin-bottom: 2rem;
+      color: #6b7280;
+    }
+    #view-btn {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    #view-btn:hover { background: #1d4ed8; }
+    #algorithm-list {
+      display: none;
+      margin-top: 2rem;
+      width: 100%;
+      max-width: 800px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+    .item {
+      background: var(--card-bg);
+      padding: 1rem;
+      border-radius: 4px;
+      box-shadow: 0 2px 4px var(--shadow);
+      cursor: pointer;
+      transition: transform 0.2s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .item:hover { transform: translateY(-4px); }
+    .icon {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+      color: var(--primary);
+    }
+    .title {
+      font-size: 1rem;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="container" id="hero">
+    <h1>알고리즘을 시각적으로 학습하세요</h1>
+    <p>단계별 애니메이션으로 알고리즘의 동작 원리를 쉽게 이해합니다.</p>
+    <button id="view-btn">알고리즘 시각화 보기</button>
+  </div>
+  <div class="container" id="algorithm-list">
+    <div class="item" onclick="navigateTo('sorting')">
+      <div class="icon">🔀</div>
+      <div class="title">정렬</div>
+    </div>
+    <div class="item" onclick="navigateTo('graph')">
+      <div class="icon">🌐</div>
+      <div class="title">그래프</div>
+    </div>
+    <div class="item" onclick="navigateTo('tree')">
+      <div class="icon">🌳</div>
+      <div class="title">트리</div>
+    </div>
+    <div class="item" onclick="navigateTo('dp')">
+      <div class="icon">🧮</div>
+      <div class="title">동적 계획</div>
+    </div>
+    <div class="item" onclick="navigateTo('greedy')">
+      <div class="icon">🎯</div>
+      <div class="title">탐욕</div>
+    </div>
+    <div class="item" onclick="navigateTo('string')">
+      <div class="icon">🔡</div>
+      <div class="title">문자열</div>
+    </div>
+  </div>
+  <script>
+    const btn = document.getElementById('view-btn');
+    const hero = document.getElementById('hero');
+    const list = document.getElementById('algorithm-list');
+    btn.addEventListener('click', () => {
+      hero.style.display = 'none';
+      list.style.display = 'grid';
+    });
+    function navigateTo(cat) {
+      alert(cat + ' 알고리즘 시각화 페이지로 이동');
+    }
+  </script>
+</body>
+</html>
