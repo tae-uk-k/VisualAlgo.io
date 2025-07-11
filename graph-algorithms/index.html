@@ -1,1 +1,519 @@
-
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>그래프 알고리즘 시각화</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #10b981;
+            --accent: #f59e0b;
+            --danger: #ef4444;
+            --bg: #f7f9fb;
+            --text: #212529;
+            --text-light: #6b7280;
+            --card-bg: #fff;
+            --shadow: rgba(0,0,0,0.05);
+            --border: #e5e7eb;
+        }
+        
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+        
+        .header {
+            background: var(--card-bg);
+            padding: 2rem 0;
+            box-shadow: 0 2px 4px var(--shadow);
+            margin-bottom: 3rem;
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+            padding: 0 2rem;
+        }
+        
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+        
+        .breadcrumb a {
+            color: var(--primary);
+            text-decoration: none;
+            cursor: pointer;
+        }
+        
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            color: var(--text-light);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+        
+        .category-section {
+            margin-bottom: 3rem;
+        }
+        
+        .category-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text);
+            border-left: 4px solid var(--primary);
+            padding-left: 1rem;
+        }
+        
+        .category-description {
+            color: var(--text-light);
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+            padding-left: 1rem;
+        }
+        
+        .algorithms-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .algorithm-card {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px var(--shadow);
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .algorithm-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+        }
+        
+        .algorithm-card.featured::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .algorithm-icon {
+            font-size: 2rem;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .search-icon { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+        .shortest-icon { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+        .spanning-icon { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+        .flow-icon { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
+        .special-icon { background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); }
+        
+        .card-content h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+        
+        .card-content p {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+        
+        .algorithm-tags {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+        
+        .tag {
+            padding: 0.25rem 0.5rem;
+            background: #f3f4f6;
+            color: #374151;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        .tag.beginner { background: #d1fae5; color: #065f46; }
+        .tag.intermediate { background: #fed7aa; color: #9a3412; }
+        .tag.advanced { background: #fecaca; color: #991b1b; }
+        
+        .complexity {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            margin-top: 0.5rem;
+        }
+        
+        .complexity strong {
+            color: var(--text);
+        }
+        
+        .back-btn {
+            position: fixed;
+            top: 2rem;
+            left: 2rem;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            color: var(--text);
+            text-decoration: none;
+            font-size: 0.9rem;
+            box-shadow: 0 2px 4px var(--shadow);
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .back-btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+        
+        @media (max-width: 768px) {
+            .header-content {
+                padding: 0 1rem;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .container {
+                padding: 0 1rem;
+            }
+            
+            .algorithms-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .back-btn {
+                position: static;
+                margin: 1rem;
+                width: fit-content;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-btn">
+        ← 메인으로 돌아가기
+    </a>
+    
+    <div class="header">
+        <div class="header-content">
+            <div class="breadcrumb">
+                <a onclick="goBack()">알고리즘 시각화</a>
+                <span>></span>
+                <span>그래프 알고리즘</span>
+            </div>
+            <h1>🌐 그래프 알고리즘</h1>
+            <p class="subtitle">
+                그래프 자료구조의 다양한 알고리즘들을 시각적으로 학습하고, 
+                각 알고리즘의 동작 원리와 특성을 이해해보세요.
+            </p>
+        </div>
+    </div>
+    
+    <div class="container">
+        <!-- 탐색 알고리즘 -->
+        <div class="category-section">
+            <h2 class="category-title">🔍 탐색 알고리즘</h2>
+            <p class="category-description">그래프를 순회하며 노드를 방문하는 기본적인 알고리즘들입니다.</p>
+            
+            <div class="algorithms-grid">
+                <div class="algorithm-card featured" onclick="navigateTo('exhaustive-search')">
+                    <div class="card-header">
+                        <div class="algorithm-icon search-icon">🔍</div>
+                        <div class="card-content">
+                            <h3>완전탐색 (BFS & DFS)</h3>
+                            <p>너비 우선 탐색과 깊이 우선 탐색의 동작 과정을 단계별로 시각화</p>
+                        </div>
+                    </div>
+                    <div class="algorithm-tags">
+                        <span class="tag beginner">초급</span>
+                        <span class="tag">기초</span>
+                        <span class="tag">필수</span>
+                    </div>
+                    <div class="complexity">
+                        <strong>시간복잡도:</strong> O(V + E) | <strong>공간복잡도:</strong> O(V)
+                    </div>
+                </div>
+                
+                <div class="algorithm-card" onclick="navigateTo('a-star')">
+                    <div class="card-header">
+                        <div class="algorithm-icon search-icon">⭐</div>
+                        <div class="card-content">
+                            <h3>A* 알고리즘</h3>
+                            <p>휴리스틱을 사용한 효율적인 경로 탐색 알고리즘</p>
+                        </div>
+                    </div>
+                    <div class="algorithm-tags">
+                        <span class="tag intermediate">중급</span>
+                        <span class="tag">휴리스틱</span>
+                    </div>
+                    <div class="complexity">
+                        <strong>시간복잡도:</strong> O(b^d) | <strong>공간복잡도:</strong> O(b^d)
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 최단 경로 알고리즘 -->
+        <div class="category-section">
+            <h2 class="category-title">🛤️ 최단 경로 알고리즘</h2>
+            <p class="category-description">그래프에서 두 노드 간의 최단 경로를 찾는 알고리즘들입니다.</p>
+            
+            <div class="algorithms-grid">
+                <div class="algorithm-card" onclick="navigateTo('dijkstra')">
+                    <div class="card-header">
+                        <div class="algorithm-icon shortest-icon">🎯</div>
+                        <div class="card-content">
+                            <h3>다익스트라 알고리즘</h3>
+                            <p>가중치가 있는 그래프에서 단일 출발점 최단 경로 탐색</p>
+                        </div>
+                    </div>
+                    <div class="algorithm-tags">
+                        <span class="tag intermediate">중급</span>
+                        <span class="tag">가중치</span>
+                        <span class="tag">우선순위큐</span>
+                    </div>
+                    <div class="complexity">
+                        <strong>시간복잡도:</strong> O((V + E) log V) | <strong>공간복잡도:</strong> O(V)
+                    </div>
+                </div>
+                
+                <div class="algorithm-card" onclick="navigateTo('bellman-ford')">
+                    <div class="card-header">
+                        <div class="algorithm-icon shortest-icon">🔄</div>
+                        <div class="card-content">
+                            <h3>벨만-포드 알고리즘</h3>
+                            <p>음수 가중치를 허용하는 최단 경로 알고리즘</p>
+                        </div>
+                    </div>
+                    <div class="algorithm-tags">
+                        <span class="tag intermediate">중급</span>
+                        <span class="tag">음수가중치</span>
+                    </div>
+                    <div class="complexity">
+                        <strong>시간복잡도:</strong> O(VE) | <strong>공간복잡도:</strong> O(V)
+                    </div>
+                </div>
+                
+                <div class="algorithm-card" onclick="navigateTo('floyd-warshall')">
+                    <div class="card-header">
+                        <div class="algorithm-icon shortest-icon">🌐</div>
+                        <div class="card-content">
+                            <h3>플로이드-워셜 알고리즘</h3>
+                            <p>모든 정점 쌍 간의 최단 경로를 구하는 알고리즘</p>
+                        </div>
+                    </div>
+                    <div class="algorithm-tags">
+                        <span class="tag intermediate">중급</span>
+                        <span class="tag">동적계획법</span>
+                        <span class="tag">모든쌍</span>
+                    </div>
+                    <div class="complexity">
+                        <strong>시간복잡도:</strong> O(V³) | <strong>공간복잡도:</strong> O(V²)
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 신장 트리 알고리즘 -->
+        <div class="category-section">
+            <h2 class="category-title">🌳 최소 신장 트리</h2>
+            <p class="category-description">그래프의 모든 정점을 연결하는 최소 비용의 트리를 찾는 알고리즘들입니다.</p>
+            
+            <div class="algorithms-grid">
+                <div class="algorithm-card" onclick="navigateTo('kruskal')">
+                    <div class="card-header">
+                        <div class="algorithm-icon spanning-icon">🌿</div>
+                        <div class="card-content">
+                            <h3>크루스칼 알고리즘</h3>
+                            <p>간선을 가중치 순으로 정렬하여 최소 신장 트리를 구성</p>
+                        </div>
+                    </div>
+                    <div class="algorithm-tags">
+                        <span class="tag intermediate">중급</span>
+                        <span class="tag">유니온파인드</span>
+                        <span class="tag">탐욕법</span>
+                    </div>
+                    <div class="complexity">
+                        <strong>시간복잡도:</strong> O(E log E) | <strong>공간복잡도:</strong> O(V)
+                    </div>
+                </div>
+                
+                <div class="algorithm-card" onclick="navigateTo('prim')">
+                    <div class="card-header">
+                        <div class="algorithm-icon spanning-icon">🌲</div>
+                        <div class="card-content">
+                            <h3>프림 알고리즘</h3>
+                            <p>정점에서 시작하여 점진적으로 최소 신장 트리를 확장</p>
+                        </div>
+                    </div>
+                    <div class="algorithm-tags">
+                        <span class="tag intermediate">중급</span>
+                        <span class="tag">우선순위큐</span>
+                        <span class="tag">탐욕법</span>
+                    </div>
+                    <div class="complexity">
+                        <strong>시간복잡도:</strong> O(E log V) | <strong>공간복잡도:</strong> O(V)
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 네트워크 플로우 -->
+        <div class="category-section">
+            <h2 class="category-title">🌊 네트워크 플로우</h2>
+            <p class="category-description">네트워크에서 최대 유량을 찾는 알고리즘들입니다.</p>
+            
+            <div class="algorithms-grid">
+                <div class="algorithm-card" onclick="navigateTo('ford-fulkerson')">
+                    <div class="card-header">
+                        <div class="algorithm-icon flow-icon">💧</div>
+                        <div class="card-content">
+                            <h3>포드-풀커슨 알고리즘</h3>
+                            <p>네트워크에서 최대 유량을 구하는 기본 알고리즘</p>
+                        </div>
+                    </div>
+                    <div class="algorithm-tags">
+                        <span class="tag advanced">고급</span>
+                        <span class="tag">최대유량</span>
+                    </div>
+                    <div class="complexity">
+                        <strong>시간복잡도:</strong> O(Ef) | <strong>공간복잡도:</strong> O(V + E)
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 특수 알고리즘 -->
+        <div class="category-section">
+            <h2 class="category-title">🎭 특수 그래프 알고리즘</h2>
+            <p class="category-description">특정 상황이나 그래프 구조에서 사용되는 특수한 알고리즘들입니다.</p>
+            
+            <div class="algorithms-grid">
+                <div class="algorithm-card" onclick="navigateTo('topological-sort')">
+                    <div class="card-header">
+                        <div class="algorithm-icon special-icon">📊</div>
+                        <div class="card-content">
+                            <h3>위상 정렬</h3>
+                            <p>방향 비순환 그래프의 정점들을 선형으로 정렬</p>
+                        </div>
+                    </div>
+                    <div class="algorithm-tags">
+                        <span class="tag intermediate">중급</span>
+                        <span class="tag">DAG</span>
+                        <span class="tag">순서</span>
+                    </div>
+                    <div class="complexity">
+                        <strong>시간복잡도:</strong> O(V + E) | <strong>공간복잡도:</strong> O(V)
+                    </div>
+                </div>
+                
+                <div class="algorithm-card" onclick="navigateTo('strongly-connected')">
+                    <div class="card-header">
+                        <div class="algorithm-icon special-icon">🔗</div>
+                        <div class="card-content">
+                            <h3>강연결 성분</h3>
+                            <p>방향 그래프에서 강연결 성분을 찾는 알고리즘</p>
+                        </div>
+                    </div>
+                    <div class="algorithm-tags">
+                        <span class="tag advanced">고급</span>
+                        <span class="tag">타잔</span>
+                        <span class="tag">코사라주</span>
+                    </div>
+                    <div class="complexity">
+                        <strong>시간복잡도:</strong> O(V + E) | <strong>공간복잡도:</strong> O(V)
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function navigateTo(algorithm) {
+            if (algorithm === 'exhaustive-search') {
+                window.location.href = 'exhaustive-search.html';
+            } else {
+                alert(algorithm + ' 알고리즘 시각화 페이지가 준비 중입니다.');
+            }
+        }
+        
+        function goBack() {
+            window.history.back();
+        }
+        
+        // 카드 호버 효과
+        document.querySelectorAll('.algorithm-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-4px) scale(1.02)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+    </script>
+</body>
+</html>
